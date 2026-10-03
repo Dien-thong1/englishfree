@@ -42,8 +42,8 @@ main{flex:1;padding:14px;min-width:0;overflow-y:auto;overscroll-behavior:contain
 .ov{position:fixed;inset:0;background:var(--bg);display:none;z-index:9;overflow:hidden;padding:env(safe-area-inset-top,0) env(safe-area-inset-right,0) env(safe-area-inset-bottom,0) env(safe-area-inset-left,0)}
 .ov.show{display:flex}
 .ov aside{width:220px;padding:16px;gap:10px}
-#pbody{flex:1;overflow:auto;padding:20px;display:grid;grid-template-columns:var(--g);gap:12px;grid-auto-rows:minmax(64px,auto);align-content:start;max-width:1200px;margin:0 auto}
-.cell{background:var(--pn);border:2px solid var(--ln);border-radius:10px;padding:14px 8px;text-align:center;cursor:pointer;min-height:72px;display:flex;align-items:center;justify-content:center;overflow-wrap:anywhere;user-select:none;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:opacity .25s}
+#pbody{flex:1;overflow:auto;padding:20px;display:grid;grid-template-columns:var(--g);gap:12px;align-content:start;max-width:1200px;margin:0 auto}
+.cell{background:var(--pn);border:2px solid var(--ln);border-radius:10px;padding:14px 8px;text-align:center;cursor:pointer;min-height:60px;display:flex;align-items:center;justify-content:center;overflow-wrap:anywhere;user-select:none;transition:opacity .25s}
 .cell[data-c=eng]{font-size:16px;font-weight:500}
 .cell[data-c=vie]{font-size:16px;color:var(--ac)}
 .cell[data-c=sp]{font-size:22px}
@@ -97,10 +97,7 @@ main{padding:12px}
 .row .eng{grid-area:h;font-size:17px}.row .vie{grid-area:e;font-size:15px}
 .row .spw{grid-area:s}.row .stw{grid-area:t}
 .row .st{font-size:11px;padding:6px 2px}
-#pbody{padding:58px 10px 96px;gap:8px;grid-auto-rows:minmax(72px,auto)}
-.cell{padding:12px 5px;min-height:72px}
-.cell[data-c=eng],.cell[data-c=vie]{font-size:15px}
-.cell[data-c=sp]{font-size:26px}
+#pbody{padding:58px 10px 96px;gap:6px}.cell{padding:8px 3px}.cell[data-c=eng],.cell[data-c=vie]{font-size:14px}
 #ghiBody{justify-content:flex-start;padding:60px 14px 14px}
 .ghi-card .eng{font-size:32px}.ghi-card .vie{font-size:18px}
 #setBody{justify-content:flex-start;padding:14px}
@@ -178,7 +175,7 @@ main{padding:12px}
 <div class="ov" id="ovSet">
 <aside><button class="pri" id="closeSet">✖ Thoát</button></aside>
 <div id="setBody">
-<div class="set-box"><h3>🔊 Tốc độ đọc (0.1 – 3)</h3><input type="text" id="rateVal" placeholder="1.15"><div class="btn-group"><button id="btnSaveRate" class="pri">💾 Lưu</button><button id="btnResetRate">↺ 1.15</button></div></div>
+<div class="set-box"><h3>🔊 Tốc độ đọc (0.1 – 3)</h3><input type="text" id="rateVal" placeholder="1"><div class="btn-group"><button id="btnSaveRate" class="pri">💾 Lưu</button><button id="btnResetRate">↺ 1</button></div></div>
 <div class="set-box"><h3>📁 Đường dẫn dữ liệu</h3><input type="text" id="dataPath" placeholder="data.txt"><div class="btn-group"><button id="btnSavePath" class="pri">💾 Lưu &amp; Tải lại</button><button id="btnResetPath">↺ Mặc định</button></div></div>
 <div class="set-box"><h3>⚙️ Xuất / Nhập tiến độ</h3><textarea id="b64Data" placeholder="Base64..."></textarea>
 <div class="btn-group"><button id="btnExport" class="pri">📤 Xuất</button><button id="btnCopy">📋 Copy</button></div>
@@ -203,8 +200,7 @@ const isNum=v=>/^\d+$/.test(v);
 
 let W=[],W0=null,sortedABC=true,tab="all",rand=null,known=new Set(),learning=new Set(),mh={};
 let autoOn=false,autoTimer=null,autoIdx=0,curWordIdx=null,readToken=0;
-const DEFAULT_RATE=1.15;
-let rate=DEFAULT_RATE,dataPath="data.txt",autoGap=800;
+let rate=1,dataPath="data.txt",autoGap=800;
 
 try{known=new Set(JSON.parse(localStorage.hskknown||"[]"))}catch{}
 try{learning=new Set(JSON.parse(localStorage.hsklearning||"[]"))}catch{}
@@ -214,35 +210,6 @@ try{const g=parseInt(localStorage.hskgap);if(isFinite(g)&&g>=0)autoGap=Math.min(
 const save=()=>{try{localStorage.hskknown=JSON.stringify([...known]);localStorage.hsklearning=JSON.stringify([...learning])}catch{}};
 const savePath=()=>{try{localStorage.hskdatapath=dataPath}catch{}};
 const saveRate=()=>{try{localStorage.hskrate=rate}catch{}};
-
-/* ==== Speech: cache voices + tránh delay do cancel→speak liền nhau ==== */
-let _voices=[];
-function primeVoices(){
-  if(!window.speechSynthesis)return;
-  const v=speechSynthesis.getVoices();
-  if(v&&v.length)_voices=v;
-}
-if(window.speechSynthesis){
-  primeVoices();
-  speechSynthesis.addEventListener?.("voiceschanged",primeVoices);
-  // fallback cho browser cũ
-  speechSynthesis.onvoiceschanged=primeVoices;
-}
-const getVoices=()=>_voices.length?_voices:(_voices=speechSynthesis?speechSynthesis.getVoices():[]);
-function findVoice(l){
-  const vs=getVoices();
-  return vs.find(x=>x.lang.replace("_","-")===l)||vs.find(x=>x.lang.replace("_","-").startsWith(l.slice(0,2)))||null;
-}
-// Gọi speak an toàn: chỉ cancel khi thực sự có utterance đang chạy
-function safeSpeak(u){
-  if(!window.speechSynthesis)return;
-  if(speechSynthesis.speaking||speechSynthesis.pending){
-    speechSynthesis.cancel();
-    setTimeout(()=>{try{speechSynthesis.speak(u)}catch{}},0);
-  }else{
-    try{speechSynthesis.speak(u)}catch{}
-  }
-}
 
 const show=(id,on=true)=>{const e=$(id);e.classList.toggle("show",on);if(!on)e.classList.remove("mo");else document.body.classList.remove("mo");updFab()};
 const shown=id=>$(id).classList.contains("show");
@@ -264,6 +231,7 @@ async function loadData(){
   if(!r.ok)throw new Error("HTTP "+r.status);
   W=(await r.text()).split(/\r?\n/).map(l=>l.trim()).filter(Boolean).map(l=>{
     const p=l.split("|").map(s=>s.trim());
+    // 2 cột: en|vi · 3 cột trở lên: en|(bỏ)|vi
     return p.length>=3?[p[0]||"",p[2]||""]:[p[0]||"",p[1]||""];
   });
   W0=W.slice();sortedABC=true;syncSortBtns();migrate();
@@ -281,12 +249,11 @@ function countExisting(){
 }
 function say(t,l){
   if(!window.speechSynthesis)return;
-  readToken++;
+  killSpeech();readToken++;
   const u=new SpeechSynthesisUtterance(t);
-  u.lang=l;u.rate=rate;
-  const v=findVoice(l);
-  if(v)u.voice=v;
-  safeSpeak(u);
+  const v=speechSynthesis.getVoices().find(x=>x.lang.replace("_","-")==l);
+  u.lang=l;u.rate=rate;if(v)u.voice=v;
+  speechSynthesis.speak(u);
 }
 const en=i=>say(W[i][0],"en-US"),vi=i=>say(W[i][1],"vi-VN");
 const isKnown=i=>known.has(W[i][0]);
@@ -297,13 +264,12 @@ const pick=()=>rand=sh(base()).slice(0,10);
 const fresh=(prev,n)=>{const p=cur();return sh(p.filter(i=>!prev.includes(i))).concat(sh(p.filter(i=>prev.includes(i)))).slice(0,n)};
 const numN=()=>Math.max(1,parseInt($("#num").value)||10);
 
-const $list=$("#list"),$cnt=$("#cnt"),$main=$("main");
 function render(){
   const ids=cur(),{kc,lc}=countExisting();
-  $cnt.textContent=`${rand?"Ngẫu nhiên ":""}${!sortedABC?"🔀 ":""}${ids.length} từ · 📖 ${lc} · 💚 ${kc}/${W.length}`;
-  $list.className=Object.keys(mh).filter(k=>mh[k]).map(k=>"h-"+k).join(" ");
+  $("#cnt").textContent=`${rand?"Ngẫu nhiên ":""}${!sortedABC?"🔀 ":""}${ids.length} từ · 📖 ${lc} · 💚 ${kc}/${W.length}`;
+  $("#list").className=Object.keys(mh).filter(k=>mh[k]).map(k=>"h-"+k).join(" ");
   $$(".hd [data-m]").forEach(b=>b.classList.toggle("on",!!mh[b.dataset.m]));
-  $list.innerHTML=ids.length?ids.map(i=>{
+  $("#list").innerHTML=ids.length?ids.map(i=>{
     const w=W[i],k=isKnown(i),lr=isLearning(i);
     return `<div class="row${autoOn&&i===curWordIdx?" rd":""}" data-i="${i}">
       <div class="eng">${esc(w[0])}</div>
@@ -321,13 +287,13 @@ function updAutoBtn(){
   else{b.classList.remove("on");b.textContent="▶ Đọc tự động"}
 }
 function scrollToWord(i){
-  let target=null;
+  const sc=$("main");let target=null;
   $$("#list .row").forEach(r=>{const on=+r.dataset.i===i;r.classList.toggle("rd",on);if(on)target=r});
   if(target){
-    const sr=$main.getBoundingClientRect(),rr=target.getBoundingClientRect();
+    const sr=sc.getBoundingClientRect(),rr=target.getBoundingClientRect();
     const delta=(rr.top+rr.height/2)-(sr.top+sr.height/2);
-    const max=$main.scrollHeight-$main.clientHeight;
-    $main.scrollTo({top:Math.max(0,Math.min($main.scrollTop+delta,max)),behavior:"smooth"});
+    const max=sc.scrollHeight-sc.clientHeight;
+    sc.scrollTo({top:Math.max(0,Math.min(sc.scrollTop+delta,max)),behavior:"smooth"});
   }
 }
 function stopAuto(){
@@ -337,14 +303,15 @@ function stopAuto(){
 function readWord(i,onEnd){
   const tok=++readToken;clearTimeout(autoTimer);autoTimer=null;
   if(!window.speechSynthesis){onEnd&&onEnd();return}
+  killSpeech();
   const u=new SpeechSynthesisUtterance(W[i][0]);
-  u.lang="en-US";u.rate=rate;
-  const v=findVoice("en-US");if(v)u.voice=v;
+  const v=speechSynthesis.getVoices().find(x=>x.lang.replace("_","-")=="en-US");
+  u.lang="en-US";u.rate=rate;if(v)u.voice=v;
   let fired=false;
   const finish=()=>{if(fired)return;fired=true;clearTimeout(autoTimer);autoTimer=null;if(tok!==readToken)return;onEnd&&onEnd()};
   u.onend=finish;u.onerror=finish;
   autoTimer=setTimeout(finish,Math.max(6000,W[i][0].length*1500+2000));
-  safeSpeak(u);
+  speechSynthesis.speak(u);
 }
 function autoStep(){
   if(!autoOn)return;
@@ -368,7 +335,7 @@ $("#autoGap").oninput=e=>{
 
 /* Sự kiện list */
 $$(".hd [data-m]").forEach(b=>b.onclick=()=>{mh[b.dataset.m]=!mh[b.dataset.m];render()});
-$list.onclick=e=>{
+$("#list").onclick=e=>{
   const row=e.target.closest(".row");if(!row)return;
   const i=+row.dataset.i,a=e.target.closest("[data-a]")?.dataset.a;
   if(a=="st"){openSt(W[i][0]);return}
@@ -509,7 +476,7 @@ $("#btnSaveRate").onclick=()=>{
   if(!isFinite(v)||v<0.1||v>3){alert("Giá trị không hợp lệ (0.1 – 3).");return}
   rate=v;saveRate();alert("✅ Đã lưu tốc độ: "+rate);
 };
-$("#btnResetRate").onclick=()=>$("#rateVal").value=DEFAULT_RATE;
+$("#btnResetRate").onclick=()=>$("#rateVal").value=1;
 $("#btnSavePath").onclick=async()=>{
   const p=$("#dataPath").value.trim()||"data.txt";dataPath=p;savePath();
   try{
@@ -626,8 +593,8 @@ $("#fs").onclick=()=>isFs()?(document.exitFullscreen||document.webkitExitFullscr
 ["fullscreenchange","webkitfullscreenchange"].forEach(ev=>document.addEventListener(ev,updFs));
 
 loadData().then(()=>{updAutoBtn();render()}).catch(err=>{
-  $cnt.textContent="";
-  $list.innerHTML='<div class="empty">Không tải được '+esc(dataPath)+' ('+esc(String(err.message))+').<br>Hãy chạy qua web server (ví dụ <code>python3 -m http.server</code>).</div>';
+  $("#cnt").textContent="";
+  $("#list").innerHTML='<div class="empty">Không tải được '+esc(dataPath)+' ('+esc(String(err.message))+').<br>Hãy chạy qua web server (ví dụ <code>python3 -m http.server</code>).</div>';
 });
 </script>
 </body></html>
