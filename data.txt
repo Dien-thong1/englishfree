@@ -1,0 +1,260 @@
+i|tôi
+you|bạn
+he|anh ấy
+she|cô ấy
+it|nó
+we|chúng tôi
+they|họ
+me|tôi (tân ngữ)
+him|anh ấy (tân ngữ)
+her|cô ấy (tân ngữ)
+us|chúng tôi (tân ngữ)
+them|họ (tân ngữ)
+my|của tôi
+your|của bạn
+his|của anh ấy
+its|của nó
+our|của chúng tôi
+their|của họ
+this|này
+that|kia
+these|những cái này
+those|những cái kia
+be|là / thì / ở
+am|là (I am)
+is|là / ở (số ít)
+are|là / ở (số nhiều)
+was|thì / là (quá khứ số ít)
+were|thì / là (quá khứ số nhiều)
+have|có
+has|có (ngôi 3 số ít)
+had|đã có
+do|làm
+does|làm (ngôi 3 số ít)
+did|đã làm
+will|sẽ
+can|có thể
+could|có thể (quá khứ)
+would|sẽ (điều kiện)
+should|nên
+may|có lẽ
+must|phải
+go|đi
+come|đến
+get|lấy / nhận
+make|làm / tạo ra
+know|biết
+think|nghĩ
+take|cầm / lấy
+see|nhìn thấy
+want|muốn
+look|nhìn
+use|sử dụng
+find|tìm thấy
+give|cho / đưa
+tell|nói / kể
+work|làm việc
+say|nói
+ask|hỏi
+seem|dường như
+feel|cảm thấy
+try|cố gắng
+leave|rời đi
+call|gọi
+keep|giữ
+let|để cho
+begin|bắt đầu
+show|cho thấy
+hear|nghe
+play|chơi
+run|chạy
+move|di chuyển
+time|thời gian
+year|năm
+day|ngày
+week|tuần
+month|tháng
+hour|giờ
+minute|phút
+today|hôm nay
+now|bây giờ
+then|lúc đó / sau đó
+always|luôn luôn
+never|không bao giờ
+often|thường xuyên
+person|người
+man|đàn ông
+woman|phụ nữ
+child|đứa trẻ
+family|gia đình
+mother|mẹ
+father|bố
+brother|anh/em trai
+sister|chị/em gái
+friend|bạn bè
+people|mọi người
+world|thế giới
+place|nơi chốn
+house|ngôi nhà
+home|nhà
+room|phòng
+school|trường học
+city|thành phố
+country|đất nước
+area|vực
+side|phía / bên
+back|phía sau / lưng
+good|tốt
+bad|xấu
+new|mới
+old|cũ / già
+great|tuyệt vời
+high|cao
+small|nhỏ
+large|rộng lớn
+big|lớn
+long|dài
+short|ngắn / thấp
+young|trẻ
+early|sớm
+late|muộn
+happy|vui vẻ
+sad|buồn
+right|đúng / phải
+wrong|sai
+easy|dễ
+hard|khó / chăm chỉ
+different|khác nhau
+same|giống nhau
+important|quan trọng
+real|thật
+sure|chắc chắn
+free|miễn phí / rảnh rỗi
+one|một
+two|hai
+three|ba
+four|bốn
+five|năm
+six|sáu
+seven|bảy
+eight|tám
+nine|chín
+ten|mười
+first|đầu tiên
+second|thứ hai
+last|cuối cùng
+many|nhiều (đếm được)
+much|nhiều (không đếm được)
+food|thức ăn
+water|nước
+meat|thịt
+fish|cá
+bread|bánh mì
+rice|cơm / gạo
+fruit|trái cây
+milk|sữa
+coffee|cà phê
+tea|trà
+eat|ăn
+uống|uống
+hungry|đói
+full|no / đầy
+body|cơ thể
+head|đầu
+face|mặt
+eye|mắt
+ear|tai
+nose|mũi
+mouth|miệng
+hand|tay
+foot|chân
+heart|trái tim
+hair|tóc
+skin|da
+red|đỏ
+blue|xanh dương
+green|xanh lá
+yellow|vàng
+white|trắng
+black|đen
+brown|nâu
+orange|cam
+pink|hồng
+gray|xám
+color|màu sắc
+clothes|quần áo
+shirt|áo sơ mi
+pants|quần
+shoe|giày
+hat|mũ
+coat|áo khoác
+wear|mặc / đeo
+dress|váy
+size|kích cỡ
+pocket|túi áo/quần
+door|cửa
+window|cửa sổ
+table|cái bàn
+chair|cái ghế
+bed|giường
+desk|bàn làm việc
+key|chìa khóa
+light|đèn / ánh sáng
+wall|tường
+floor|sàn nhà
+clock|đồng hồ
+phone|điện thoại
+computer|máy tính
+screen|màn hình
+camera|máy ảnh
+machine|máy móc
+battery|pin
+charge|sạc
+app|ứng dụng
+file|tệp tin
+sun|mặt trời
+rain|mưa
+wind|gió
+sky|bầu trời
+tree|cây
+flower|hoa
+earth|trái đất
+hot|nóng
+cold|lạnh
+warm|ấm áp
+cool|mát mẻ
+love|yêu
+hate|ghét
+like|thích
+smile|cườimỉm
+laugh|cười lớn
+cry|khóc
+angry|tức giận
+tired|mệt mỏi
+afraid|sợ hãi
+glad|vui mừng
+in|ở trong
+on|ở trên
+at|tại
+under|ở dưới
+over|phía trên
+between|ở giữa
+behind|phía sau
+near|gần
+far|xa
+up|lên
+down|xuống
+out|ra ngoài
+through|thông qua / xuyên qua
+and|và
+but|nhưng
+or|hoặc
+so|vì vậy / thế nên
+because|bởi vì
+if|nếu
+when|khi nào
+where|ở đâu
+while|trong khi
+although|mặc dù
+than|hơn
+that|rằng / điều mà
