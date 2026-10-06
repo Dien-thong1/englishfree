@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lịch Phật Lịch</title>
+<style>
+:root{--bg:#fbf6ea;--card:#fffdf7;--ink:#3b2a14;--mute:#8a7556;--acc:#b8651b;--line:#eadfc6;--evt:#fde8c4;--today:#b8651b;--todayInk:#fff;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1c1610;--card:#262017;--ink:#f2e6cf;--mute:#a8957a;--acc:#e69a4b;--line:#3b3224;--evt:#4a3718;--today:#e69a4b;--todayInk:#1c1610}}
+:root[data-theme="dark"]{--bg:#1c1610;--card:#262017;--ink:#f2e6cf;--mute:#a8957a;--acc:#e69a4b;--line:#3b3224;--evt:#4a3718;--today:#e69a4b;--todayInk:#1c1610}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Georgia,"Times New Roman",serif;min-height:100vh}
+.wrap{max-width:560px;margin:0 auto;padding:16px}
+h1{font-size:17px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);margin:0 0 2px;font-weight:normal;text-align:center}
+.pl{font-size:clamp(30px,10vw,50px);text-align:center;color:var(--acc);margin:0;line-height:1.1;font-weight:normal}
+.sub{text-align:center;color:var(--mute);font-size:16px;margin:8px 0 18px}
+.bar{display:flex;gap:10px;align-items:center;justify-content:center;margin-bottom:14px}
+button{font:inherit;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:10px 16px;cursor:pointer;font-size:17px}
+button:active{background:var(--evt)}
+#prev,#next{padding:8px 22px;font-size:24px;line-height:1}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.c{aspect-ratio:1/1;background:var(--card);border:1px solid var(--line);border-radius:10px;display:flex;align-items:center;justify-content:center;padding:0;position:relative}
+.c .p{font-size:24px;line-height:1;font-weight:normal}
+.c.e{background:var(--evt)}
+.c.e .p{color:var(--acc);font-weight:bold}
+.c.t{background:var(--today);border-color:var(--today)}
+.c.t .p{color:var(--todayInk)}
+.info{margin-top:16px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;font-size:18px;line-height:1.5}
+.info b{color:var(--acc)}
+.info p{margin:6px 0}
+.note{font-size:14px;color:var(--mute);margin-top:14px;text-align:center;line-height:1.7}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>☸ Phật lịch</h1>
+  <p class="pl" id="plYear"></p>
+  <p class="sub" id="sub"></p>
+  <div class="bar">
+    <button id="prev" aria-label="Tháng trước">‹</button>
+    <button id="today">Hôm nay</button>
+    <button id="next" aria-label="Tháng sau">›</button>
+  </div>
+  <div class="grid" id="grid"></div>
+  <div class="info" id="info"></div>
+  <div class="note">
+    Ô trong lịch là ngày trong tháng Phật lịch.<br>
+    Ngày 1 (sóc) và ngày 15 (vọng) là ngày ăn chay.<br>
+    Năm Phật lịch khởi đầu từ ngày Phật Đản 15 tháng 4 âm lịch.
+  </div>
+</div>
+<script>
+const PI=Math.PI,TZ=7;
+function jd(dd,mm,yy){const a=Math.floor((14-mm)/12),y=yy+4800-a,m=mm+12*a-3;let j=dd+Math.floor((153*m+2)/5)+365*y+Math.floor(y/4)-Math.floor(y/100)+Math.floor(y/400)-32045;if(j<2299161)j=dd+Math.floor((153*m+2)/5)+365*y+Math.floor(y/4)-32083;return j}
+function fromJd(j){const a=j+32044,b=Math.floor((4*a+3)/146097),c=a-Math.floor(146097*b/4),d=Math.floor((4*c+3)/1461),e=c-Math.floor(1461*d/4),m=Math.floor((5*e+2)/153);return{d:e-Math.floor((153*m+2)/5)+1,m:m+3-12*Math.floor(m/10),y:100*b+d-4800+Math.floor(m/10)}}
+function newMoon(k){const T=k/1236.85,T2=T*T,T3=T2*T,r=PI/180;let J=2415020.75933+29.53058868*k+0.0001178*T2-0.000000155*T3;J+=0.00033*Math.sin((166.56+132.87*T-0.009173*T2)*r);const M=359.2242+29.10535608*k-0.0000333*T2-0.00000347*T3,Mp=306.0253+385.81691806*k+0.0107306*T2+0.00001236*T3,F=21.2964+390.67050646*k-0.0016528*T2-0.00000239*T3;let C=(0.1734-0.000393*T)*Math.sin(M*r)+0.0021*Math.sin(2*r*M)-0.4068*Math.sin(Mp*r)+0.0161*Math.sin(r*2*Mp)-0.0004*Math.sin(r*3*Mp)+0.0104*Math.sin(r*2*F)-0.0051*Math.sin(r*(M+Mp))-0.0074*Math.sin(r*(M-Mp))+0.0004*Math.sin(r*(2*F+M))-0.0004*Math.sin(r*(2*F-M))-0.0006*Math.sin(r*(2*F+Mp))+0.001*Math.sin(r*(2*F-Mp))+0.0005*Math.sin(r*(2*Mp+M));const dt=T<-11?0.001+0.000839*T+0.0002261*T2-0.00000845*T3-0.000000081*T*T3:-0.000278+0.000265*T+0.000262*T2;return J+C-dt}
+function sunLong(j){const T=(j-2451545)/36525,T2=T*T,r=PI/180,M=357.5291+35999.0503*T-0.0001559*T2-0.00000048*T*T2,L0=280.46645+36000.76983*T+0.0003032*T2;const DL=(1.9146-0.004817*T-0.000014*T2)*Math.sin(r*M)+(0.019993-0.000101*T)*Math.sin(r*2*M)+0.00029*Math.sin(r*3*M);let L=(L0+DL)*r;L-=PI*2*Math.floor(L/(PI*2));return Math.floor(L/PI*6)}
+const nm=k=>Math.floor(newMoon(k)+0.5+TZ/24),sm=j=>sunLong(j-0.5-TZ/24);
+function lm11(y){const off=jd(31,12,y)-2415021,k=Math.floor(off/29.530588853);let n=nm(k);if(sm(n)>=9)n=nm(k-1);return n}
+function leapOff(a){const k=Math.floor((a-2415021.076998695)/29.530588853+0.5);let last,i=1,arc=sm(nm(k+i));do{last=arc;i++;arc=sm(nm(k+i))}while(arc!=last&&i<14);return i-1}
+function toLunar(dd,mm,yy){const dn=jd(dd,mm,yy),k=Math.floor((dn-2415021.076998695)/29.530588853);let ms=nm(k+1);if(ms>dn)ms=nm(k);let a=lm11(yy),b=a,ly;if(a>=ms){ly=yy;a=lm11(yy-1)}else{ly=yy+1;b=lm11(yy+1)}const d=dn-ms+1,diff=Math.floor((ms-a)/29);let leap=0,m=diff+11;if(b-a>365){const lo=leapOff(a);if(diff>=lo){m=diff+10;if(diff==lo)leap=1}}if(m>12)m-=12;if(m>=11&&diff<4)ly-=1;return{d,m,y:ly,leap}}
+
+/* Năm Phật lịch: tăng thêm 1 vào ngày Phật Đản (15/4 âm lịch) */
+function plYear(l){return l.y+((l.m>4||(l.m==4&&(l.d>=15||l.leap)))?544:543)}
+
+/* Chỉ số tuần trăng chứa một ngày JD */
+function kOf(dn){let k=Math.floor((dn-2415021.076998695)/29.530588853);while(nm(k)>dn)k--;while(nm(k+1)<=dn)k++;return k}
+/* Thông tin một tháng Phật lịch (bắt đầu từ ngày sóc) */
+function monthInfo(k){const j=nm(k),len=nm(k+1)-j,g=fromJd(j),l=toLunar(g.d,g.m,g.y);return{k,j,len,m:l.m,y:l.y,leap:l.leap}}
+
+const EV={"15/4":"Lễ Phật Đản (Vesak)","15/7":"Vu Lan báo hiếu","8/12":"Vía Phật Thành Đạo","8/2":"Vía Phật Xuất Gia","15/2":"Vía Phật Nhập Niết Bàn","19/2":"Vía Quán Thế Âm đản sanh","19/6":"Vía Quán Thế Âm thành đạo","19/9":"Vía Quán Thế Âm xuất gia","8/4":"Vía Phật Thích Ca đản sanh (lễ cũ)"};
+function evt(l){
+  if(!l.leap&&EV[l.d+"/"+l.m])return EV[l.d+"/"+l.m];
+  if(l.d==1)return"Mùng 1 – ngày sóc, ăn chay";
+  if(l.d==15)return"Rằm – ngày vọng, ăn chay";
+  return"";
+}
+
+const $=id=>document.getElementById(id);
+const MN=["","Giêng","Hai","Ba","Tư","Năm","Sáu","Bảy","Tám","Chín","Mười","Một","Chạp"];
+const mName=mi=>"Tháng "+MN[mi.m]+(mi.leap?" nhuận":"");
+
+const now=new Date();
+const todayJd=jd(now.getDate(),now.getMonth()+1,now.getFullYear());
+let curK=kOf(todayJd);
+
+function render(){
+  const mi=monthInfo(curK);
+  const p1=plYear({d:1,m:mi.m,y:mi.y,leap:mi.leap});
+  const p2=plYear({d:mi.len,m:mi.m,y:mi.y,leap:mi.leap});
+  $("plYear").textContent=(p1===p2?p1:p1+" – "+p2);
+  $("sub").textContent=mName(mi)+" · "+mi.len+" ngày";
+
+  const todayHere=(todayJd>=mi.j&&todayJd<mi.j+mi.len);
+  let h="";
+  for(let i=0;i<mi.len;i++){
+    const d=i+1,l={d,m:mi.m,y:mi.y,leap:mi.leap};
+    const e=evt(l)?1:0;
+    const isT=todayHere&&d===todayJd-mi.j+1;
+    /* Dùng thẻ div tĩnh, không còn là nút bấm */
+    h+=`<div class="c${e?" e":""}${isT?" t":""}"><span class="p">${d}</span></div>`;
+  }
+  $("grid").innerHTML=h;
+
+  /* Hiển thị thông tin ngày hôm nay nếu đang xem tháng hiện tại */
+  if(todayHere){
+    const d=todayJd-mi.j+1;
+    const l={d,m:mi.m,y:mi.y,leap:mi.leap};
+    const e=evt(l);
+    $("info").innerHTML=
+      `<p><b>Ngày ${d} ${mName(mi).toLowerCase()}</b></p>`+
+      `<p>Phật lịch <b>${plYear(l)}</b></p>`+
+      (e?`<p>🪷 ${e}</p>`:"");
+  }else{
+    $("info").innerHTML=
+      `<p><b>${mName(mi)}</b></p>`+
+      `<p>Phật lịch <b>${p1===p2?p1:p1+" – "+p2}</b></p>`+
+      `<p style="color:var(--mute);font-size:15px">Tháng này không chứa ngày hôm nay.</p>`;
+  }
+}
+$("prev").onclick=()=>{curK--;render()};
+$("next").onclick=()=>{curK++;render()};
+$("today").onclick=()=>{curK=kOf(todayJd);render()};
+render();
+</script>
+</body>
+</html>
